@@ -1,3 +1,7 @@
+# Guess the number (computer)
+# Created by: Dylan Prole 
+# Time taken: 5 minutes
+
 import random
 
 number = int(random.random() * 9) + 1

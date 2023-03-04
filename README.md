@@ -2,16 +2,16 @@
 A repository for 12 beginner python projects from freeCodeCamp.org.
 
 # 1. Madlibs 
-- Status: In Progress
+- Status: Complete
 
 # 2. Guess the Number (computer) 
-- Status: Not Yet Started
+- Status: Complete
 
 # 3. Guess the Number (user)
-- Status: Not Yet Started
+- Status: Complete
 
 # 4. Rock Paper Scissors
-- Status: Not Yet Started
+- Status: In Progress
 
 # 5. Hangman
 - Status: Not Yet Started
