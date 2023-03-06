@@ -17,7 +17,7 @@ A repository for 12 beginner python projects from freeCodeCamp.org.
 - Status: Not Yet Started
 
 # 6. Tic-Tac-Toe
-- Status: Not Yet Started
+- Status: Complete
 
 # 7. Tic-Tac-Toe AI
 - Status: Not Yet Started
