@@ -1,3 +1,7 @@
+# Tic Tac Toe (random)
+# Created by: Dylan Prole 
+# Time taken: 45 minutes
+
 import numpy as np
 import random 
 from time import sleep
