@@ -107,21 +107,40 @@ def choose_pos(board):
                 break
     if new_board == True:
         return 1
-        
+    # Get current scores of board    
     row, col, dia = get_score(board) 
-    
-    
     # Check if opponent has played first move in corner
     moves = 0
     for i in range(3):
         for j in range(3):
             if board[i][j] == 'O' or board[i][j] == 'X':
                 moves += 1
-    
     if moves == 1:
         if board[0][0] == 'X' or board[0][2] == 'X' or board[2][0] == 'X' or board[2][2] == 'X':
             return 5
-    
+    # If there are 2 of the same symbols in a streak, play in that streak
+    if 2 in row[0]:
+        for i in range(3): 
+            if row[0][i] == 2:
+                #get pos
+                for pos in row[1][i]:
+                    if pos in board:
+                        return int(pos)
+    if 2 in col[0]:
+        for i in range(3):
+            if col[0][i] == 2:
+                #get pos
+                for pos in col[1][i]:
+                    if pos in board:
+                        return int(pos)
+    if 2 in dia[0]:
+        for i in range(2):
+            if col[0][i] == 2:
+                #get pos
+                for pos in dia[1][i]:
+                    if pos in board:
+                        return int(pos)
+    # Do a corner move if nothing else
     corner_moves = ['1', '3', '7', '9']
     for pos in corner_moves:
         if pos in board:
