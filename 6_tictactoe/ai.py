@@ -1,6 +1,6 @@
-# Tic Tac Toe (random)
+# Tic Tac Toe (Unbeatable AI)
 # Created by: Dylan Prole 
-# Time taken: 1.5 hours
+# Time taken: 90 minutes
 
 import numpy as np
 import random 
@@ -172,7 +172,7 @@ def choose_pos(board):
     # Choose a random valid position otherwise
     valid_pos = False
     while not valid_pos:
-        position = int(random.random()*9)
+        position = int(random.random()*9.99)
         if str(position) in board:
             valid_pos = True
             return position
@@ -182,14 +182,14 @@ players = ['player', 'computer']
 turn = players[int(random.random()*1.99)]
 
 new_board = create_board()
-
 win, player = check_win(new_board)
 
 while not win:
     if check_draw(new_board):
         break
-    print_board(new_board)
+    
     if turn == 'player':
+        print_board(new_board)
         # do something
         valid_input = False
         while not valid_input:
