@@ -94,25 +94,48 @@ def get_score(board):
     dia_scores[0][1] = abs(dia_scores[0][1])
     return row_scores, col_scores, dia_scores
     
-def choose_pos(board, row_score, col_score, dia_score):
+def choose_pos(board):
     # Check if first turn
-    if 
+    new_board = True
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == 'O':
+                new_board = False
+                break
+            elif board[i][j] == 'X':
+                new_board = False
+                break
+    if new_board == True:
+        return 1
+        
+    row, col, dia = get_score(board) 
+    
+    
+    # Check if opponent has played first move in corner
+    moves = 0
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == 'O' or board[i][j] == 'X':
+                moves += 1
+    
+    if moves == 1:
+        if board[0][0] == 'X' or board[0][2] == 'X' or board[2][0] == 'X' or board[2][2] == 'X':
+            return 5
+    
+    corner_moves = ['1', '3', '7', '9']
+    for pos in corner_moves:
+        if pos in board:
+            return int(pos)
+    
+    return 0
         
 symbols = {'player':'X', 'computer':'O'}
+players = ['player', 'computer']
+turn = players[int(random.random()*1.99)]
+
 new_board = create_board()
 
-turn = 'player'
 win, player = check_win(new_board)
-print_board(new_board)
-change_board(new_board, 1, 'O')
-change_board(new_board, 2, 'O')
-change_board(new_board, 3, 'O')
-change_board(new_board, 5, 'O')
-row, col, dia = get_score(new_board)
-print(row)
-print(col)
-print(dia)
-
 
 while not win:
     if check_draw(new_board):
@@ -132,6 +155,8 @@ while not win:
     elif turn == 'computer':
         # do something
         print('Computer is thinking....')
+        print('Chosen pos: ', end='')
+        print(choose_pos(new_board))
         sleep(2)
         valid_input = False
         while not valid_input:
