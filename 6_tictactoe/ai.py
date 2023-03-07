@@ -64,21 +64,55 @@ def get_score(board):
     row_scores = [[0,0,0], [['1','2','3'], ['4','5','6'], ['7','8','9']]]
     col_scores = [[0,0,0], [['1','4','7'], ['2','5','8'], ['3','6','9']]]
     dia_scores = [[0,0], [['1','5','9'],['3','5','7']]]
-    
     # row scores
     for i in range(3):
         for j in range(3):
             if board[i][j] == 'X':
                 row_scores[0][i] += 1
-            if board[i][j] == 'O':
+            elif board[i][j] == 'O':
                 row_scores[0][i] -= 1
-            
+        row_scores[0][i] = abs(row_scores[0][i])
+    # col scores
+    for j in range(3):
+        for i in range(3):
+            if board[i][j] == 'X':
+                col_scores[0][j] += 1
+            elif board[i][j] == 'O':
+                col_scores[0][j] -= 1
+        col_scores[0][j] = abs(col_scores[0][j])
+    # dia scores
+    for i in range(3):
+        if board[i][i] == 'X':
+            dia_scores[0][0] += 1
+        elif board[i][i] == 'O':
+            dia_scores[0][0] -= 1
+        if board[2-i][i] == 'X':
+            dia_scores[0][1] += 1
+        elif board[2-i][i] == 'O':
+            dia_scores[0][1] -= 1
+    dia_scores[0][0] = abs(dia_scores[0][0])
+    dia_scores[0][1] = abs(dia_scores[0][1])
+    return row_scores, col_scores, dia_scores
+    
+def choose_pos(board, row_score, col_score, dia_score):
+    # Check if first turn
+    if 
         
 symbols = {'player':'X', 'computer':'O'}
 new_board = create_board()
 
 turn = 'player'
 win, player = check_win(new_board)
+print_board(new_board)
+change_board(new_board, 1, 'O')
+change_board(new_board, 2, 'O')
+change_board(new_board, 3, 'O')
+change_board(new_board, 5, 'O')
+row, col, dia = get_score(new_board)
+print(row)
+print(col)
+print(dia)
+
 
 while not win:
     if check_draw(new_board):
