@@ -50,8 +50,15 @@ def check_win(board):
             return True, 'computer'
         if diagonal_value == 'X':
             return True, 'player'
-    
     return (False, 'None')
+    
+def check_draw(board):
+    valid_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] in valid_list:
+                return False
+    return True
         
 symbols = {'player':'X', 'computer':'O'}
 new_board = create_board()
@@ -60,15 +67,17 @@ turn = 'player'
 win, player = check_win(new_board)
 
 while not win:
+    if check_draw(new_board):
+        break
     print_board(new_board)
     if turn == 'player':
         # do something
         valid_input = False
         while not valid_input:
-            position = int(input('Enter a pos: '))
+            position = input('Enter a pos: ')
             if str(position) in new_board:
                 valid_input = True
-        change_board(new_board, position, symbols[turn])
+        change_board(new_board, int(position), symbols[turn])
         win, player = check_win(new_board)
         turn = 'computer'
     
@@ -89,4 +98,6 @@ if player == 'player':
     print('You win!')
 elif player == 'computer':
     print('You lose sorry bro :/')
+else:
+    print("It's a draw!")
 print_board(new_board)
