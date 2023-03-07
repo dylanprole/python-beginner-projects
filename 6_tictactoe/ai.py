@@ -1,6 +1,6 @@
 # Tic Tac Toe (random)
 # Created by: Dylan Prole 
-# Time taken: 45 minutes
+# Time taken: 1.5 hours
 
 import numpy as np
 import random 
@@ -136,7 +136,7 @@ def choose_pos(board):
                 for pos in dia[1][i]:
                     if pos in board:
                         return int(pos)
-    # If there are 2 player symbols, play to block
+    # If there are 2 player symbols in a streak, play to block
     if -2 in row[0]:
         for i in range(3): 
             if row[0][i] == -2:
@@ -169,8 +169,13 @@ def choose_pos(board):
             return 7
     elif '9' in board:
         return 9
-    
-    return 0
+    # Choose a random valid position otherwise
+    valid_pos = False
+    while not valid_pos:
+        position = int(random.random()*9)
+        if str(position) in board:
+            valid_pos = True
+            return position
         
 symbols = {'player':'X', 'computer':'O'}
 players = ['player', 'computer']
@@ -198,14 +203,6 @@ while not win:
     elif turn == 'computer':
         # do something
         print('Computer is thinking....')
-        print('Chosen pos: ', end='')
-        print(choose_pos(new_board))
-        sleep(2)
-        valid_input = False
-        while not valid_input:
-            position = int(random.random()*9)
-            if str(position) in new_board:
-                valid_input = True
         position = choose_pos(new_board)
         change_board(new_board, position, symbols[turn])
         win, player = check_win(new_board)
