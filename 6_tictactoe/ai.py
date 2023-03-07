@@ -67,31 +67,27 @@ def get_score(board):
     # row scores
     for i in range(3):
         for j in range(3):
-            if board[i][j] == 'X':
+            if board[i][j] == 'O':
                 row_scores[0][i] += 1
-            elif board[i][j] == 'O':
+            elif board[i][j] == 'X':
                 row_scores[0][i] -= 1
-        row_scores[0][i] = abs(row_scores[0][i])
     # col scores
     for j in range(3):
         for i in range(3):
-            if board[i][j] == 'X':
+            if board[i][j] == 'O':
                 col_scores[0][j] += 1
-            elif board[i][j] == 'O':
+            elif board[i][j] == 'X':
                 col_scores[0][j] -= 1
-        col_scores[0][j] = abs(col_scores[0][j])
     # dia scores
     for i in range(3):
-        if board[i][i] == 'X':
+        if board[i][i] == 'O':
             dia_scores[0][0] += 1
-        elif board[i][i] == 'O':
+        elif board[i][i] == 'X':
             dia_scores[0][0] -= 1
-        if board[2-i][i] == 'X':
+        if board[2-i][i] == 'O':
             dia_scores[0][1] += 1
-        elif board[2-i][i] == 'O':
+        elif board[2-i][i] == 'X':
             dia_scores[0][1] -= 1
-    dia_scores[0][0] = abs(dia_scores[0][0])
-    dia_scores[0][1] = abs(dia_scores[0][1])
     return row_scores, col_scores, dia_scores
     
 def choose_pos(board):
@@ -108,7 +104,7 @@ def choose_pos(board):
     if new_board == True:
         return 1
     # Get current scores of board    
-    row, col, dia = get_score(board) 
+    row, col, dia = get_score(board)
     # Check if opponent has played first move in corner
     moves = 0
     for i in range(3):
@@ -135,16 +131,44 @@ def choose_pos(board):
                         return int(pos)
     if 2 in dia[0]:
         for i in range(2):
-            if col[0][i] == 2:
+            if dia[0][i] == 2:
+                #get pos
+                for pos in dia[1][i]:
+                    if pos in board:
+                        return int(pos)
+    # If there are 2 player symbols, play to block
+    if -2 in row[0]:
+        for i in range(3): 
+            if row[0][i] == -2:
+                #get pos
+                for pos in row[1][i]:
+                    if pos in board:
+                        return int(pos)
+    if -2 in col[0]:
+        for i in range(3):
+            if col[0][i] == -2:
+                #get pos
+                for pos in col[1][i]:
+                    if pos in board:
+                        return int(pos)
+    if -2 in dia[0]:
+        for i in range(2):
+            if dia[0][i] == -2:
                 #get pos
                 for pos in dia[1][i]:
                     if pos in board:
                         return int(pos)
     # Do a corner move if nothing else
-    corner_moves = ['1', '3', '7', '9']
-    for pos in corner_moves:
-        if pos in board:
-            return int(pos)
+    if '1' in board:
+        return 1
+    if '2' in board:
+        if '3' in board:
+            return 3
+    elif '4' in board:
+        if '7' in board:
+            return 7
+    elif '9' in board:
+        return 9
     
     return 0
         
@@ -182,6 +206,7 @@ while not win:
             position = int(random.random()*9)
             if str(position) in new_board:
                 valid_input = True
+        position = choose_pos(new_board)
         change_board(new_board, position, symbols[turn])
         win, player = check_win(new_board)
         turn = 'player'
