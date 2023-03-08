@@ -52,19 +52,28 @@ def print_tiles(tiles, letters_guessed, turns_left):
     for tile in tiles:
         print(tile, end=' ')
     print()
-    print('Turns left: ', end ='')
-    print(str(turns_left))
     print('Letters already guessed: ', end='')
     for letter in letters_guessed:
-        print(letter, end='')
+        print(letter, end=' ')
+    print()
+    print('Turns left: ', end ='')
+    print(str(turns_left))
     
     
     
-def is_word_guessed():
+    
+def is_word_guessed(secret_word, letters_guessed):
     '''
     secret_word (str): word the user is guessing
     letters_guessed (list): list (of letters), which letters have been guessed
     returns: boolean, true if all guessed letters are in word
     '''
+    word_guessed = True
+    for c in secret_word:
+        if c not in letters_guessed:
+            word_guessed = False
+    return word_guessed
+            
+if __name__ == '__main__':
     
-print_tiles(['c', '_', '_'], 5)
+    
