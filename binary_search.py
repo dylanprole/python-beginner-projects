@@ -1,6 +1,13 @@
-
+# Binary search algo
+# Created by: Dylan Prole 
+# Time taken: 10 minutes
 
 def binary_search(L, value, BINARY_SEARCH_COUNTER):
+    '''
+    L (list): The list to search through; assumed to be sorted list
+    value (int): Value to find within the list
+    BINARY_SEARCH_COUNTER (int): Counter to count how many binary_search recursions are performed
+    '''
     BINARY_SEARCH_COUNTER += 1
     print(f'Binary search starting...this is number {BINARY_SEARCH_COUNTER} search, using list {L}.')
     # Check to see if we have an empty list
