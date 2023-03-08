@@ -1,10 +1,11 @@
 # Hangman
 # Created by: Dylan Prole 
-# Time taken: x minutes (start 12:36)
+# Time taken: 40 minutes
 
 import string
+import random
 
-word_list = ['peanut', 'flower', 'horse', 'dog']
+WORD_LIST = ['peanut', 'flower', 'horse', 'dog']
 
 def is_valid_letter(letter, letters_guessed):
     '''
@@ -31,14 +32,10 @@ def update_tiles(secret_word, letters_guessed):
     '''
     tiles = []
     for letter in secret_word:
-        print('The current letter being checked is: ', end='')
-        print(letter, end=', ')
         if letter in letters_guessed:
             tiles.append(letter)
-            print('It is in the letters guessed!')
         else:
             tiles.append('_')
-            print('It is NOT the letters guessed :(')
     return tiles
     
 def print_tiles(tiles, letters_guessed, turns_left):
@@ -59,9 +56,6 @@ def print_tiles(tiles, letters_guessed, turns_left):
     print('Turns left: ', end ='')
     print(str(turns_left))
     
-    
-    
-    
 def is_word_guessed(secret_word, letters_guessed):
     '''
     secret_word (str): word the user is guessing
@@ -75,5 +69,22 @@ def is_word_guessed(secret_word, letters_guessed):
     return word_guessed
             
 if __name__ == '__main__':
-    
-    
+    secret_word = WORD_LIST[int(random.random()*(len(WORD_LIST)-0.01))]
+    turns = len(secret_word) + 5
+    letters_guessed = []
+    while turns > 0:
+        tiles = update_tiles(secret_word, letters_guessed)
+        if is_word_guessed(secret_word, letters_guessed):
+            print('Congrats you win!!')
+            print(f'The word was: {secret_word}')
+            break
+        print_tiles(tiles, letters_guessed, turns)
+        valid_input = False
+        while not valid_input:
+            guessed_letter = input('Enter a letter: ')
+            if is_valid_letter(guessed_letter, letters_guessed):
+                valid_input = True
+                letters_guessed.append(guessed_letter)
+        turns -= 1
+    if turns == 0:
+        print('Wuh-wuh you lose :(')
