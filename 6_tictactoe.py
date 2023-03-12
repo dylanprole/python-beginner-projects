@@ -1,4 +1,4 @@
-# Tic Tac Toe (random)
+# Tic Tac Toe (random ai)
 # Created by: Dylan Prole 
 # Time taken: 45 minutes
 
