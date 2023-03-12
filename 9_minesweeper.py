@@ -4,16 +4,20 @@ import random
 board_size = 10
 
 def create_board(board_size):
-    return ['?']*board_size*board_size
+    return ['-']*board_size*board_size
 
 def create_mines(board_size, first_move):
     mine_board = [' ']*board_size*board_size
     mine_count = board_size
+    adjacent = get_adjacent(first_move, board_size)
+    illegal_mine_loc = [first_move]
+    for num in adjacent:
+        illegal_mine_loc.append(first_move+num)
     while mine_count > 0:
         print(f'Mine number {mine_count}', end='; ')
         loc = int(random.random()*(len(mine_board)-0.01))
         print(f'New location = {loc}', end='; ')
-        if mine_board[loc] != 'M' and loc != first_move:
+        if mine_board[loc] != 'M' and loc not in illegal_mine_loc:
             print('adding mine here....')
             mine_board[loc] = 'M'
             mine_count -= 1
@@ -36,36 +40,8 @@ def create_mapping(board_size):
 def calc_mine_numbers(mine_board, board_size):
     mine_count_board = mine_board[:]
 
-    adjacent_regular = [-11, -10, -9, -1, 1, 9, 10, 11]
-    adjacent_left_edge = [-10, -9, 1, 10, 11]
-    adjacent_right_edge = [-11, -10, -1, 9, 10]
-    adjacent_top_edge = [-1, 1, 9, 10, 11]
-    adjacent_bottom_edge = [-11, -10, -9, -1, 1]
-    adjacent_top_left = [1, 10, 11]
-    adjacent_top_right = [-1, 9, 10]
-    adjacent_bottom_left = [-10, -9, 1]
-    adjacent_bottom_right = [-11, -10, -1]
-
     for loc in range(board_size*board_size):
-        if loc == 0:
-            adjacent = adjacent_top_left
-        elif loc == board_size - 1:
-            adjacent = adjacent_top_right
-        elif loc == (board_size * board_size) - board_size:
-            adjacent = adjacent_bottom_left
-        elif loc == (board_size * board_size) - 1:
-            adjacent = adjacent_bottom_right
-        elif loc < board_size:
-            adjacent = adjacent_top_edge
-        elif loc % board_size == 0:
-            adjacent = adjacent_left_edge
-        elif (loc + 1) % board_size == 0:
-            adjacent = adjacent_right_edge
-        elif loc >= (board_size * board_size) - board_size:
-            adjacent = adjacent_bottom_edge
-        else:
-            adjacent = adjacent_regular
-
+        adjacent = get_adjacent(loc, board_size)
         mine_count = 0
         if mine_count_board[loc] != 'M':
             for num in adjacent:
@@ -77,17 +53,17 @@ def calc_mine_numbers(mine_board, board_size):
 
 def add_flag(board, mapping, pos):
     loc = mapping[pos]
-    if board[loc] == '?':
+    if board[loc] == '-':
         board[loc] = 'F'
     return board
 
 def remove_flag(board, mapping, pos):
     loc = mapping[pos]
     if board[loc] == 'F':
-        board[loc] = '?'
+        board[loc] = '-'
     return board
 
-def adjacents(loc, board_size):
+def get_adjacent(loc, board_size):
     adjacent_regular = [-11, -10, -9, -1, 1, 9, 10, 11]
     adjacent_left_edge = [-10, -9, 1, 10, 11]
     adjacent_right_edge = [-11, -10, -1, 9, 10]
@@ -119,58 +95,30 @@ def adjacents(loc, board_size):
     
     return adjacent
 
-def propogate_clearing(board, mine_numbers):
-    adjacent_regular = [-11, -10, -9, -1, 1, 9, 10, 11]
-    adjacent_left_edge = [-10, -9, 1, 10, 11]
-    adjacent_right_edge = [-11, -10, -1, 9, 10]
-    adjacent_top_edge = [-1, 1, 9, 10, 11]
-    adjacent_bottom_edge = [-11, -10, -9, -1, 1]
-    adjacent_top_left = [1, 10, 11]
-    adjacent_top_right = [-1, 9, 10]
-    adjacent_bottom_left = [-10, -9, 1]
-    adjacent_bottom_right = [-11, -10, -1]
-
+def propogate_clearing(board, mine_numbers, board_size):
     cleared = False
     while not cleared:
-        print('Checking cells to propogate....')
+        #print('Checking cells to propogate....')
         cleared = True
         for loc in range(len(board)):
-            print(f'Cell {loc} is a {board[loc]} on main board, and has a {mine_numbers[loc]} for mine number.')
+            #print(f'Cell {loc} is a {board[loc]} on main board, and has a {mine_numbers[loc]} for mine number.')
             if board[loc] == ' ' and mine_numbers[loc] == '0':
-                print('Identified cell to propogate outwards...')
-                if loc == 0:
-                    adjacent = adjacent_top_left
-                elif loc == board_size - 1:
-                    adjacent = adjacent_top_right
-                elif loc == (board_size * board_size) - board_size:
-                    adjacent = adjacent_bottom_left
-                elif loc == (board_size * board_size) - 1:
-                    adjacent = adjacent_bottom_right
-                elif loc < board_size:
-                    adjacent = adjacent_top_edge
-                elif loc % board_size == 0:
-                    adjacent = adjacent_left_edge
-                elif (loc + 1) % board_size == 0:
-                    adjacent = adjacent_right_edge
-                elif loc >= (board_size * board_size) - board_size:
-                    adjacent = adjacent_bottom_edge
-                else:
-                    adjacent = adjacent_regular
-
+                #print('Identified cell to propogate outwards...')
+                adjacent = get_adjacent(loc, board_size)
                 for num in adjacent:
-                    print('Checking adjacent cells.....')
-                    if board[loc + num] == '?' and mine_numbers[loc + num] != 'M':
-                        print(f'Adjacent cell {loc + num} is a {board[loc + num]} on main board, and has a {mine_numbers[loc + num]} for mine number.')
-                        print('Clearing....')
+                    #print('Checking adjacent cells.....')
+                    if board[loc + num] == '-' and mine_numbers[loc + num] != 'M':
+                        #print(f'Adjacent cell {loc + num} is a {board[loc + num]} on main board, and has a {mine_numbers[loc + num]} for mine number.')
+                        #print('Clearing....')
                         if mine_numbers[loc + num] == '0':
                             board[loc + num] = ' '
                         else:
                             board[loc + num] = mine_numbers[loc + num]
                         cleared = False
-            print('-----------')
+            #print('-----------')
     return board
 
-def clear_space(board, mine_numbers, mapping, pos):
+def clear_space(board, mine_numbers, mapping, pos, board_size):
     loc = mapping[pos]
     # Reveal number below space
     if mine_numbers[loc] == 'M':
@@ -182,7 +130,7 @@ def clear_space(board, mine_numbers, mapping, pos):
         board[loc] = mine_numbers[loc]
 
     # Propogate clearing
-    board = propogate_clearing(board, mine_numbers)
+    board = propogate_clearing(board, mine_numbers, board_size)
 
     return True, board
 
@@ -205,15 +153,11 @@ def print_board(board, board_size):
 
 new_mapping = create_mapping(board_size)        
 new_board = create_board(board_size)
-print_board(new_board, board_size)
-print()
-new_mines = create_mines(board_size, 0)
+new_mines = create_mines(board_size, 1)
 print_board(new_mines, board_size)
 print()
 new_mine_numbers = calc_mine_numbers(new_mines, board_size)
-print_board(new_mine_numbers, board_size)
-print()
-safe, new_board = clear_space(new_board, new_mine_numbers, new_mapping, 'b0')
+safe, new_board = clear_space(new_board, new_mine_numbers, new_mapping, 'b0', board_size)
 print_board(new_board, board_size)
 if not safe:
     print('You lose :(')
