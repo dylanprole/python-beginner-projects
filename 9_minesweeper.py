@@ -120,19 +120,20 @@ def propogate_clearing(board, mine_numbers, board_size):
 
 def clear_space(board, mine_numbers, mapping, pos, board_size):
     loc = mapping[pos]
-    # Reveal number below space
-    if mine_numbers[loc] == 'M':
-        board[loc] = 'X'
-        return False, board
-    elif mine_numbers[loc] == '0':
-        board[loc] = ' '
-    else:
-        board[loc] = mine_numbers[loc]
+    if board[loc] == '-':
+        # Reveal number below space
+        if mine_numbers[loc] == 'M':
+            board[loc] = 'X'
+            return True, board
+        elif mine_numbers[loc] == '0':
+            board[loc] = ' '
+        else:
+            board[loc] = mine_numbers[loc]
 
-    # Propogate clearing
-    board = propogate_clearing(board, mine_numbers, board_size)
+        # Propogate clearing
+        board = propogate_clearing(board, mine_numbers, board_size)
 
-    return True, board
+    return False, board
 
 def print_board(board, board_size):
     letters = string.ascii_lowercase[:board_size]
@@ -148,16 +149,30 @@ def print_board(board, board_size):
             print(board[board_size*i + j], end=' | ')
         print()
         print('----' + '----'*board_size + '-')
+    print()
 
+def check_win(board, mine_numbers):
+    win = True
+    for loc in range(len(board)):
+        if board[loc] == '-' and mine_numbers[loc] != 'M':
+            win = False
+    return win
 
-
-new_mapping = create_mapping(board_size)        
-new_board = create_board(board_size)
-new_mines = create_mines(board_size, 1)
-print_board(new_mines, board_size)
-print()
-new_mine_numbers = calc_mine_numbers(new_mines, board_size)
-safe, new_board = clear_space(new_board, new_mine_numbers, new_mapping, 'b0', board_size)
-print_board(new_board, board_size)
-if not safe:
-    print('You lose :(')
+if __name__ == '__main__':
+    lose, win = False, False
+    while not lose or win:
+        new_mapping = create_mapping(board_size)        
+        new_board = create_board(board_size)
+        new_mines = create_mines(board_size, 1)
+        print_board(new_mines, board_size)
+        new_mine_numbers = calc_mine_numbers(new_mines, board_size)
+        lose, new_board = clear_space(new_board, new_mine_numbers, new_mapping, 'b0', board_size)
+        print_board(new_board, board_size)
+        if lose:
+            print('You lose :(')
+        win = check_win(new_board, new_mine_numbers)
+        if win:
+            print('You won!')
+        else:
+            print('Not there yet...')
+        lose = True
