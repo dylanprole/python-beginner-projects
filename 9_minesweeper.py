@@ -1,3 +1,7 @@
+# Guess the number (computer)
+# Created by: Dylan Prole 
+# Time taken: 3 hours
+
 import string
 import random
 
