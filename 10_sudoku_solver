@@ -1,0 +1,140 @@
+# Sudoku solver
+# Created by: Dylan Prole 
+# Time taken: x minutes
+
+easy_sudoku =   '16-9-472---257---3--7--18--4--719---------------825--9--43--5--3---489---281-7-64'
+easy_solution = '163984725892576413547231896456719238289463157731825649674392581315648972928157364'
+
+def cells():
+    cells = {}
+    for cell_num in range(9):
+        cells[f'cell_{cell_num}'] = []
+        for i in range(3):
+            for j in range(3):
+                cells[f'cell_{cell_num}'].append((27*(cell_num//3)) + (3*(cell_num%3)) + (9*i) + j)
+    return cells
+
+def rows():
+    rows = {}
+    for row_num in range(9):
+        rows[f'row_{row_num}'] = []
+        for i in range(9):
+            rows[f'row_{row_num}'].append((9*row_num) + i)
+    return rows
+
+def cols():
+    cols = {}
+    for col_num in range(9):
+        cols[f'col_{col_num}'] = []
+        for i in range(9):
+            cols[f'col_{col_num}'].append(col_num + 9*i)
+    return cols
+
+def create_sudoku(sudoku_string):
+    sudoku = []
+    for value in sudoku_string:
+        if value == '-':
+            sudoku.append(' ')
+        else:
+            sudoku.append(value)
+    return sudoku
+
+def display_board(board):
+    cell = 0
+    for i in range(9):
+        print()
+        if i == 0:
+            print('-----------------------------------------')
+        elif i % 3 == 0:
+            print('-----------------------------------------')
+        print('-----------------------------------------')
+        print('|| ', end='')
+        for j in range(9):
+            print(board[9*i + j], end='')
+            cell += 1
+            if (9*i + j + 1) % 3 == 0:
+                print(' || ', end='')
+            else:
+                print(' | ', end='')
+    print()
+    print('-----------------------------------------')
+    print('-----------------------------------------')
+
+def valid_cells(board):
+    valid = True
+    cell_dict = cells()
+    for cell in cell_dict:
+        print()
+        print(f'Checking cell {cell}:')
+        cell_values = []
+        cell_indexes = cell_dict[cell]
+        for index in cell_indexes:
+            print(f'Value at index {index} = {board[index]}')
+            cell_values.append(board[index])
+        print(f'Row values = {cell_values}')
+        if is_duplicates(cell_values):
+            print('DUPLICATES FOUND')
+            valid =  False
+        else: 
+            print('No duplicates :)')
+    return valid
+
+def valid_rows(board):
+    valid = True
+    row_dict = rows()
+    for row in row_dict:
+        print()
+        print(f'Checking row {row}:')
+        row_values = []
+        row_indexes = row_dict[row]
+        for index in row_indexes:
+            print(f'Value at index {index} = {board[index]}')
+            row_values.append(board[index])
+        print(f'Row values = {row_values}')
+        if is_duplicates(row_values):
+            print('DUPLICATES FOUND')
+            valid =  False
+        else: 
+            print('No duplicates :)')
+    return valid
+
+def valid_cols(board):
+    valid = True
+    col_dict = cols()
+    for col in col_dict:
+        print()
+        print(f'Checking col {col}:')
+        col_values = []
+        col_indexes = col_dict[col]
+        for index in col_indexes:
+            print(f'Value at index {index} = {board[index]}')
+            col_values.append(board[index])
+        print(f'col values = {col_values}')
+        if is_duplicates(col_values):
+            print('DUPLICATES FOUND')
+            valid =  False
+        else: 
+            print('No duplicates :)')
+    return valid
+
+def valid_board(board):
+    return valid_cells(board) and valid_rows(board) and valid_cols(board)
+
+def is_duplicates(L):
+    '''
+    L (list): Input list to check for duplicates
+    returns: (bool) True or False
+    '''
+    unique = []
+    duplicates = False
+    for value in L:
+        if value not in unique and value != ' ':
+            unique.append(value)
+        elif value in unique and value != ' ':
+            duplicates = True
+    return duplicates
+
+new_sudoku = create_sudoku(easy_sudoku)
+new_solution = create_sudoku(easy_solution)
+print(valid_board(new_sudoku))
+display_board(new_sudoku)
