@@ -8,7 +8,7 @@ def create_board(board_size):
 
 def create_mines(board_size, first_move):
     mine_board = [' ']*board_size*board_size
-    mine_count = board_size
+    mine_count = (board_size*board_size)//8
     adjacent = get_adjacent(first_move, board_size)
     illegal_mine_loc = [first_move]
     for num in adjacent:
@@ -21,6 +21,8 @@ def create_mines(board_size, first_move):
             print('adding mine here....')
             mine_board[loc] = 'M'
             mine_count -= 1
+        else:
+            print()
     return mine_board
 
 def create_mapping(board_size):
@@ -40,14 +42,20 @@ def create_mapping(board_size):
 def calc_mine_numbers(mine_board, board_size):
     mine_count_board = mine_board[:]
 
-    for loc in range(board_size*board_size):
+    for loc in range(len(mine_board)):
+        print(f'Counting adjacent mines at location {loc}...')
         adjacent = get_adjacent(loc, board_size)
         mine_count = 0
         if mine_count_board[loc] != 'M':
             for num in adjacent:
+                print(f'Checking adjacent cell {loc + num}...', end='')
                 if mine_count_board[loc + num] == 'M':
                     mine_count += 1
+                    print('mine found!!!')
+                else:
+                    print()
             mine_count_board[loc] = str(mine_count)
+        print()
 
     return mine_count_board
 
@@ -64,15 +72,15 @@ def remove_flag(board, mapping, pos):
     return board
 
 def get_adjacent(loc, board_size):
-    adjacent_regular = [-11, -10, -9, -1, 1, 9, 10, 11]
-    adjacent_left_edge = [-10, -9, 1, 10, 11]
-    adjacent_right_edge = [-11, -10, -1, 9, 10]
-    adjacent_top_edge = [-1, 1, 9, 10, 11]
-    adjacent_bottom_edge = [-11, -10, -9, -1, 1]
-    adjacent_top_left = [1, 10, 11]
-    adjacent_top_right = [-1, 9, 10]
-    adjacent_bottom_left = [-10, -9, 1]
-    adjacent_bottom_right = [-11, -10, -1]
+    adjacent_regular = [-(board_size + 1), -board_size, -(board_size - 1), -1, 1, (board_size - 1), board_size, (board_size + 1)]
+    adjacent_left_edge = [-board_size, -(board_size - 1), 1, board_size, (board_size + 1)]
+    adjacent_right_edge = [-(board_size + 1), -board_size, -1, (board_size - 1), board_size]
+    adjacent_top_edge = [-1, 1, (board_size - 1), board_size, (board_size + 1)]
+    adjacent_bottom_edge = [-(board_size + 1), -board_size, -(board_size - 1), -1, 1]
+    adjacent_top_left = [1, board_size, (board_size + 1)]
+    adjacent_top_right = [-1, (board_size - 1), board_size]
+    adjacent_bottom_left = [-board_size, -(board_size - 1), 1]
+    adjacent_bottom_right = [-(board_size + 1), -board_size, -1]
 
     if loc == 0:
         adjacent = adjacent_top_left
@@ -136,6 +144,7 @@ def clear_space(board, mine_numbers, mapping, pos, board_size):
     return False, board
 
 def print_board(board, board_size):
+    print()
     letters = string.ascii_lowercase[:board_size]
     print('   || ', end='')
     for c in letters:
@@ -149,7 +158,6 @@ def print_board(board, board_size):
             print(board[board_size*i + j], end=' | ')
         print()
         print('----' + '----'*board_size + '-')
-    print()
 
 def check_win(board, mine_numbers):
     win = True
@@ -158,21 +166,60 @@ def check_win(board, mine_numbers):
             win = False
     return win
 
+def valid_first_move(mapping):
+    valid_move = False
+    while not valid_move:
+        pos = input('Please enter a coordinate for your first move: ')
+        if pos in mapping:
+            loc = mapping[pos]
+            valid_move = True
+    return pos, loc
+
+def valid_move(mapping):
+    options = {'af':'add a flag', 'rf':'remove a flag', 'cs':'clear a space'}
+    valid_option = False
+    while not valid_option:
+        player_choice = input('Add flag (af), remove flag (rf), or clear space (cs): ')
+        if player_choice in options:
+            valid_option = True
+    
+    valid_move = False
+    while not valid_move:
+        pos = input(f'Where would you like to {options[player_choice]}?: ')
+        if pos in mapping:
+            loc = mapping[pos]
+            valid_move = True
+    
+    return player_choice, pos
+
 if __name__ == '__main__':
     lose, win = False, False
-    while not lose or win:
-        new_mapping = create_mapping(board_size)        
-        new_board = create_board(board_size)
-        new_mines = create_mines(board_size, 1)
-        print_board(new_mines, board_size)
-        new_mine_numbers = calc_mine_numbers(new_mines, board_size)
-        lose, new_board = clear_space(new_board, new_mine_numbers, new_mapping, 'b0', board_size)
+    # Create new board and board mapping for coordinates
+    new_board = create_board(board_size)
+    new_mapping = create_mapping(board_size)        
+    # Print the initial board
+    print_board(new_board, board_size)
+    # Get a vlid first move from player and remove this space
+    first_pos, first_loc = valid_first_move(new_mapping)
+    new_mines = create_mines(board_size, first_loc)
+    new_mine_numbers = calc_mine_numbers(new_mines, board_size)
+    lose, new_board = clear_space(new_board, new_mine_numbers, new_mapping, first_pos, board_size)
+    win = check_win(new_board, new_mine_numbers)
+
+    while not (lose or win):
         print_board(new_board, board_size)
-        if lose:
-            print('You lose :(')
+        player_choice, player_pos = valid_move(new_mapping)
+        if player_choice == 'af':
+            new_board = add_flag(new_board, new_mapping, player_pos)
+        elif player_choice == 'cf':
+            new_board = remove_flag(new_board, new_mapping, player_pos)
+        elif player_choice == 'cs':
+            lose, new_board = clear_space(new_board, new_mine_numbers, new_mapping, player_pos, board_size)
         win = check_win(new_board, new_mine_numbers)
-        if win:
-            print('You won!')
-        else:
-            print('Not there yet...')
-        lose = True
+    
+    if win:
+        print_board(new_board, board_size)
+        print('You won!')
+    elif lose:
+        print_board(new_board, board_size)
+        print('You lose :(')
